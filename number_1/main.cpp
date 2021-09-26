@@ -1,32 +1,10 @@
 #include <iostream>
 #include <string>
 
-/*
-* =================================================================
-* ----------------------------Variables----------------------------
-* =================================================================
-*/
-enum CinCondition
-{
-	e_buffErazer = 32750,
-	e_cinOkey = 1,
-	e_cinFail = 0
-};
-
-enum EducationMatters
-{
-	e_yearsOfStudy = 4
-};
-
-/*
-* =================================================================
-* ----------------------Functions prototypes-----------------------
-* =================================================================
-*/
-std::string getName(); //user input for name
-int getAge(); //user input for age
-int getWeight(); //user input for weight
-int getYearOfStudy(); //user input for student starting year of education
+void Task1();
+int setSizeOfDatabase();
+char userChoosing();
+int getUserInput();
 
 /*
 * =================================================================
@@ -52,6 +30,41 @@ protected:
 	std::string m_name{};
 	int m_age{};
 	int m_weight{};
+private:
+	std::string getName() //user input for name
+	{
+		std::cout << "Pls enter Person's name: ";
+		std::string personName{};
+		int i_buffErazer{ 32750 };
+		bool cinFlag{};
+		while (!cinFlag)
+		{
+			cinFlag = true;
+			std::getline(std::cin, personName);
+			if (std::cin.fail())
+			{
+				cinFlag = false;
+				std::cin.clear();
+				std::cin.ignore(i_buffErazer, '\n');
+				std::cout << "Error! Pls try again." << std::endl;
+			}
+		}
+		return personName;
+	}
+
+	int getAge() //user input for age
+	{
+		std::cout << "Pls enter Person's age: ";
+		int personAge = getUserInput();
+		return personAge;
+	}
+
+	int getWeight() //user input for weight
+	{
+		std::cout << "Pls enter Person's weight: ";
+		int personWeight = getUserInput();
+		return personWeight;
+	}
 };
 
 class Student : public Person // Heritage class for TASK 1
@@ -77,9 +90,9 @@ public:
 			m_age++;
 		}
 	}
-	void printStudentInfo() 
+	void printStudentInfo()
 	{
-		std::cout << "This student's numbet is " << m_studentNumber << std::endl;
+		std::cout << "This student's number is " << m_studentNumber << std::endl;
 		std::cout << "His info:" << std::endl;
 		std::cout << " - name: " << m_name << std::endl;
 		std::cout << " - age: " << m_age << std::endl;
@@ -87,11 +100,30 @@ public:
 		std::cout << " - year of study: " << m_yearOfStudy << std::endl;
 		std::cout << " - student number: " << m_studentNumber << std::endl;
 	}
+	void getInfo()
+	{
+		setName();
+		setAge();
+		setWeight();
+		setYearOfStudy();
+	}
 protected:
 	int m_studentIndex{};
 	int m_yearOfStudy{};
 	int m_studentNumber{};
 	int m_graduationCounting{};
+	enum EducationMatters // mark of education's length
+	{
+		e_yearsOfStudy = 4
+	};
+
+private:
+	int getYearOfStudy() //user input for student starting year of education
+	{
+		std::cout << "Pls enter Student's starting year of education: ";
+		int studentStartingYear = getUserInput();
+		return studentStartingYear;
+	}
 };
 
 /*
@@ -101,14 +133,7 @@ protected:
 */
 int main()
 {
-	Student studentOne;
-	studentOne.setName();
-	studentOne.setAge();
-	studentOne.setWeight();
-	studentOne.setYearOfStudy();
-	studentOne.printStudentInfo();
-	studentOne.incrYearOfStudy();
-	studentOne.printStudentInfo();
+	Task1();
 	return 0;
 }
 
@@ -117,85 +142,144 @@ int main()
 * ----------------------------Functions----------------------------
 * =================================================================
 */
-std::string getName()
+
+void Task1()
 {
-	std::string personName{};
-	bool cinFlag{};
-	while (!cinFlag)
+	int sizeOfDatabase = setSizeOfDatabase();
+	Student* p_studentDatabase = new Student[sizeOfDatabase];
+	char c_userChoise{};
+	int databaseIndex{};
+	bool databaseClosing{};
+	while (!databaseClosing)
 	{
-		cinFlag = e_cinOkey;
-		std::cout << "Pls enter Person's name: ";
-		std::getline(std::cin, personName);
-		if (std::cin.fail())
+		std::cout << "Do you want to input a new student in database? y/n: ";
+		c_userChoise = userChoosing();
+		if (databaseIndex > sizeOfDatabase)
 		{
-			cinFlag = e_cinFail;
-			std::cin.clear();
-			std::cin.ignore(e_buffErazer, '\n');
-			std::cout << "Error! Pls try again." << std::endl;
+			std::cout << "Sorry the database is full!" << std::endl;
+		}
+		else if (c_userChoise == 'y')
+		{
+			p_studentDatabase[databaseIndex].getInfo();
+			databaseIndex++;
+		}
+		else
+		{
+			std::cout << "Do you want to increment existing student's year of study? y/n: ";
+			c_userChoise = userChoosing();
+			if (c_userChoise == 'y')
+			{
+				std::cout << "Pls choose a student's number who's year of study you want to increment: ";
+				int databaseNavig = getUserInput();
+				if (databaseNavig > databaseIndex)
+				{
+					std::cout << "Sorry, we don't have so much students in our database!" << std::endl;
+				}
+				else
+				{
+					databaseNavig--;
+					p_studentDatabase[databaseNavig].incrYearOfStudy();
+				}
+			}
+			else
+			{
+				std::cout << "Right now we have a " << databaseIndex << " students in our database!" << std::endl;
+				std::cout << "Do you want to see info about your students? y/n: ";
+				c_userChoise = userChoosing();
+				if (c_userChoise == 'y')
+				{
+					std::cout << "Pls choose a student's number who's info you want to read: ";
+					int databaseNavig = getUserInput();
+					if (databaseNavig > databaseIndex)
+					{
+						std::cout << "Sorry, we don't have so much students in our database!" << std::endl;
+					}
+					else
+					{
+						databaseNavig--;
+						p_studentDatabase[databaseNavig].printStudentInfo();
+					}
+				}
+				else
+				{
+					std::cout << "Do you want to stop working with database? y/n: ";
+					c_userChoise = userChoosing();
+					if (c_userChoise == 'y')
+					{
+						databaseClosing = true;
+					}
+					else
+					{
+						databaseClosing = false;
+					}
+				}
+			}
 		}
 	}
-	return personName;
+	delete[] p_studentDatabase;
 }
 
-int getAge()
+int setSizeOfDatabase()
 {
-	int personAge{};
+	std::cout << "Let's create our student database." << std::endl;
+	int sizeOfDatabase;
 	bool cinFlag{};
+	int i_buffErazer{ 32750 };
 	while (!cinFlag)
 	{
-		cinFlag = e_cinOkey;
-		std::cout << "Pls enter Person's age: ";
-		std::cin >> personAge;
-		std::cin.ignore(e_buffErazer, '\n');
+		cinFlag = true;
+		std::cout << "Pls, enter the size of our database: ";
+		std::cin >> sizeOfDatabase;
+		std::cin.ignore(i_buffErazer, '\n');
 		if (std::cin.fail())
 		{
-			cinFlag = e_cinFail;
+			cinFlag = false;
 			std::cin.clear();
-			std::cin.ignore(e_buffErazer, '\n');
+			std::cin.ignore(i_buffErazer, '\n');
 			std::cout << "Error! Pls try again." << std::endl;
 		}
 	}
-	return personAge;
+	return sizeOfDatabase;
 }
 
-int getWeight()
+int getUserInput()
 {
-	int personWeight{};
+	int i_buffErazer{ 32750 };
+	int RealityCheck{ 1 };
+	int userInput{};
 	bool cinFlag{};
 	while (!cinFlag)
 	{
-		cinFlag = e_cinOkey;
-		std::cout << "Pls enter Person's weight: ";
-		std::cin >> personWeight;
-		std::cin.ignore(e_buffErazer, '\n');
-		if (std::cin.fail())
+		cinFlag = true;
+		std::cin >> userInput;
+		std::cin.ignore(i_buffErazer, '\n');
+		if (std::cin.fail() || userInput < RealityCheck)
 		{
-			cinFlag = e_cinFail;
+			cinFlag = false;
 			std::cin.clear();
-			std::cin.ignore(e_buffErazer, '\n');
 			std::cout << "Error! Pls try again." << std::endl;
 		}
 	}
-	return personWeight;
+	return userInput;
 }
 
-int getYearOfStudy()
+char userChoosing()
 {
-	int studentStartingYear{};
+	char c_choise{};
 	bool cinFlag{};
+	int i_buffErazer{ 32750 };
 	while (!cinFlag)
 	{
-		cinFlag = e_cinOkey;
-		std::cout << "Pls enter Student's starting year of education: ";
-		std::cin >> studentStartingYear;
-		std::cin.ignore(e_buffErazer, '\n');
-		if (std::cin.fail())
+		cinFlag = true;
+		std::cin >> c_choise;
+		if (std::cin.fail() || c_choise != 'y' && c_choise != 'n')
 		{
-			cinFlag = e_cinFail;
+			cinFlag = false;
 			std::cin.clear();
-			std::cin.ignore(e_buffErazer, '\n');
+			std::cin.ignore(i_buffErazer, '\n');
 			std::cout << "Error! Pls try again." << std::endl;
 		}
 	}
-	return studentStartingYear;
+	std::cin.ignore(i_buffErazer, '\n');
+	return c_choise;
 }
