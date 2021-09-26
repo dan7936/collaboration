@@ -143,7 +143,7 @@ int main()
 * =================================================================
 */
 
-void Task1()
+void Task1() // primal function for TASK 1
 {
 	int sizeOfDatabase = setSizeOfDatabase();
 	Student* p_studentDatabase = new Student[sizeOfDatabase];
@@ -219,30 +219,15 @@ void Task1()
 	delete[] p_studentDatabase;
 }
 
-int setSizeOfDatabase()
+int setSizeOfDatabase() // function for seting size of database in TASK 1
 {
 	std::cout << "Let's create our student database." << std::endl;
-	int sizeOfDatabase;
-	bool cinFlag{};
-	int i_buffErazer{ 32750 };
-	while (!cinFlag)
-	{
-		cinFlag = true;
-		std::cout << "Pls, enter the size of our database: ";
-		std::cin >> sizeOfDatabase;
-		std::cin.ignore(i_buffErazer, '\n');
-		if (std::cin.fail())
-		{
-			cinFlag = false;
-			std::cin.clear();
-			std::cin.ignore(i_buffErazer, '\n');
-			std::cout << "Error! Pls try again." << std::endl;
-		}
-	}
+	std::cout << "Pls, enter the size of our database: ";
+	int sizeOfDatabase = getUserInput();
 	return sizeOfDatabase;
 }
 
-int getUserInput()
+int getUserInput() // function for geting user input
 {
 	int i_buffErazer{ 32750 };
 	int RealityCheck{ 1 };
@@ -263,7 +248,7 @@ int getUserInput()
 	return userInput;
 }
 
-char userChoosing()
+char userChoosing() // function for geting user input on continue or not
 {
 	char c_choise{};
 	bool cinFlag{};
